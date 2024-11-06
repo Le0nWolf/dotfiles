@@ -1,5 +1,3 @@
-{{ if eq .chezmoi.os "windows" }}
 if (Test-Path "$HOME\.config\powershell\completion\chezmoi-completion.ps1") {
     . "$HOME\.config\powershell\completion\chezmoi-completion.ps1"
 }
-{{ end }}

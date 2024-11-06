@@ -1,3 +1,11 @@
 {{- if ne .chezmoi.os "windows" }}
 Documents
 {{- end }}
+
+{{ if or (eq (lookPath "powershell") "") (eq (lookPath "pwsh") "") }}
+.config/powershell
+{{ end }}
+
+{{ if eq (lookPath "starship") "" }}
+.config/starship.toml
+{{ end }}
