@@ -1,0 +1,12 @@
+{{- $email := promptStringOnce . "email" "Email address" -}}
+
+[data]
+    email = {{ $email | quote }}
+
+[edit]
+{{- if eq .chezmoi.os "windows" }}
+    command = "code"
+    args = ["--wait"]
+{{ else }}
+    command = "vim"
+{{- end }}
