@@ -6,7 +6,7 @@ AppData
 .config/Code
 {{ end }}
 {{ if ne .chezmoi.os "darwin" }}
-Library/Application Support
+Library
 {{ end }}
 
 {{ if or (eq (lookPath "powershell") "") (eq (lookPath "pwsh") "") }}
