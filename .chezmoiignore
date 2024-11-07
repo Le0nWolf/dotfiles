@@ -1,6 +1,13 @@
-{{- if ne .chezmoi.os "windows" }}
+{{ if ne .chezmoi.os "windows" }}
 Documents
-{{- end }}
+AppData
+{{ end }}
+{{ if ne .chezmoi.os "linux" }}
+.config/Code
+{{ end }}
+{{ if ne .chezmoi.os "darwin" }}
+Library/Application Support
+{{ end }}
 
 {{ if or (eq (lookPath "powershell") "") (eq (lookPath "pwsh") "") }}
 .config/powershell
