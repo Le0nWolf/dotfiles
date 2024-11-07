@@ -1,0 +1,53 @@
+{
+  // ====== Font ======
+  "editor.fontFamily": "'MonoLisa'",
+  // "editor.fontWeight": 400,
+  // When lineHeight is set to zero, VS Code will figure out the
+  // the height automatically based on the font
+  "editor.lineHeight": 0, //16 for less Vertical Space
+  // "editor.fontSize": 12
+  // ====== Font Ligatures ======
+  // You can use standard CSS syntax here. To enable
+  //  ss01 for example, you could set "'ss01' on"
+  // "editor.fontLigatures": true,
+  // Font Ligatures for MonoLisa Open Type features see https://www.monolisa.dev/orders for more Information
+  // Whitespace Ligatures (calt); Coding Ligatures (liga); Alternative G (ss03 and ss04); Slashed Zero (zero); Normal Asterisk * (ss01); Script Variant (ss02); Alternativ Sharp S (ss05); Alternativ At @ (ss06 and ss18); Alternativ Curly Bracket {} (ss07); Alternativ Parenthesis () (ss08); Alternativ Greater Equal >= (ss09 and ss10); Hexadecimal X (ss11); Thin Backslash (ss12); Alternativ Dollar $ (ss13); Alternativ & (ss14); "I" Without Serif (ss15); "R" Without Serif (ss16); Alternativ .= and ..= (ss17);
+  // "editor.fontLigatures": "'calt' on, 'liga' on, 'zero' off, 'ss02' on, 'ss01' off, 'ss05' on, 'ss07' on, 'ss08' on, 'ss11' on, 'ss12' off, 'ss13' off, 'ss14' on, 'ss17' on",
+  // ====== Font Scope Customization ======
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": [
+          //following will be in italic
+          "comment",
+          "entity.name.type.class", //class names
+          "keyword", //import, export, return…
+          "constant", //String, Number, Boolean…, this, super
+          "storage.modifier", //static keyword
+          "storage.type.class.js", //class keyword
+        ],
+        "settings": {
+          "fontStyle": "italic"
+        }
+      },
+      {
+        "scope": [
+          //following will be excluded from italics (VSCode has some defaults for italics)
+          "invalid",
+          "keyword.operator",
+          "constant.numeric.css",
+          "keyword.other.unit.px.css",
+          "constant.numeric.decimal.js",
+          "constant.numeric.json"
+        ],
+        "settings": {
+          "fontStyle": ""
+        }
+      }
+    ]
+  },
+  "workbench.colorTheme": "Night Owl",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true, // Set the Color Theme
+  "editor.guides.bracketPairs": true
+}
