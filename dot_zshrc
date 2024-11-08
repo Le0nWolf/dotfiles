@@ -1,0 +1,190 @@
+# _                                    _
+#| |                                  | |
+#| |     ___  ___  _ __  ___   _______| |__  _ __ ___
+#| |    / _ \/ _ \| '_ \/ __| |_  / __| '_ \| '__/ __|
+#| |___|  __/ (_) | | | \__ \  / /\__ \ | | | | | (__
+#|______\___|\___/|_| |_|___/ /___|___/_| |_|_|  \___|
+
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+
+#################################################
+#                  zsh Options                  #
+#################################################
+
+# man zshoptions to see all
+setopt auto_cd #Allows you to cd into directiory merely by typing the directory name.
+setopt autopushd #Push directory to stack
+setopt pushdignoredups # Don't push directory if exists in stack
+setopt interactivecomments # allow comments in interactive mode
+setopt magicequalsubst     # enable filename expansion for arguments of the form ‘anything=expression’
+setopt notify              # report the status of background jobs immediately
+setopt numericglobsort     # sort filenames numerically when it makes sense
+setopt promptsubst         # enable command substitution in prompt
+setopt histverify          # show command with history expansion to user before running it
+unsetopt beep              # disable beeping
+
+
+# Basic auto/tab complete:
+autoload -U compinit
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*' #Case insensetive auto complete
+zstyle ':completion:*' menu select
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}" # Colors for Completiton
+zmodload zsh/complist
+compinit
+_comp_options+=(globdots) # Include hidden files.
+
+
+
+#################################################
+#                    VI Mode                    #
+#################################################
+
+bindkey -v
+export KEYTIMEOUT=1
+
+# Use vim keys in tab complete menu:
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -v '^?' backward-delete-char
+
+# Change cursor shape for different vi modes.
+function zle-keymap-select {
+  if [[ ${KEYMAP} == vicmd ]] ||
+     [[ $1 = 'block' ]]; then
+     echo -ne '\e[1 q'
+  elif [[ ${KEYMAP} == main ]] ||
+       [[ ${KEYMAP} == viins ]] ||
+       [[ ${KEYMAP} = '' ]] ||
+       [[ $1 = 'beam' ]]; then
+     echo -ne '\e[5 q'
+  fi
+}
+zle -N zle-keymap-select
+zle-line-init() {
+  zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
+  echo -ne "\e[5 q"
+}
+zle -N zle-line-init
+echo -ne '\e[5 q' # Use beam shape cursor on startup.
+preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
+
+# Edit line in vim with ctrl-e:
+autoload edit-command-line; zle -N edit-command-line
+bindkey '^e' edit-command-line
+
+
+#################################################
+#                 Key Bindings                  #
+#################################################
+
+# Use showkey -a to look for Keys
+# Use bindkey -l to show existing Key Bindings
+# Use zle -al to show all useable Key Bindings
+# man zshzle
+
+bindkey '^f' autosuggest-accept
+
+#################################################
+#                 History Stuff                 #
+#################################################
+
+HISTSIZE=9223372036854775807 #Set history size to maximum (Unlimited History)
+HISTFILE=$HOME/.zsh_history #Set history file to .zsh_history
+
+setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt histreduceblanks # Remove superfluous blanks from each command line being added to the history
+setopt hist_ignore_space # Don't put lines in the history that start with a space
+setopt hist_ignore_all_dups #Don't put duplicate lines in history
+setopt share_history # Causes zsh to append to history instead of overwriting it so if you start a new terminal, you have old session history
+setopt inc_append_history  #Immediately append to the history file, not just when a term is killed
+
+
+export SAVEHIST=$HISTSIZE
+
+#################################################
+#                    CONFIG                     #
+#################################################
+
+export SHELL_DIR="$HOME/.config/shell"
+[ -r "$SHELL_DIR/config" ] && source "$SHELL_DIR/config"
+
+
+#################################################
+#                    COLORS                     #
+#################################################
+
+autoload -U colors && colors
+
+configure_prompt() {
+	prompt_symbol=㉿
+	[ "$EUID" -eq 0 ] && prompt_symbol=💀
+
+
+	if [[ ${HOME} != "/root" ]] && [[ ${HOME} != "/var/root" ]];  then
+		case "$terminal_style" in
+		    1)
+		        export PS1=$'%F{%(#.blue.green)}┌──${debian_chroot:+($debian_chroot)─}${VIRTUAL_ENV:+($(basename $VIRTUAL_ENV))─}(%B%F{%(#.red.blue)}%n$prompt_symbol%m%b%F{%(#.blue.green)})-[%B%F{reset}%(6~.%-1~/…/%4~.%5~)%b%F{%(#.blue.green)}]\n└─%B%(#.%F{red}#.%F{blue}$)%b%F{reset} '
+		    	RPROMPT=$'%(?.. %? %F{red}%B⨯%b%F{reset})%(1j. %j %F{yellow}%B⚙%b%F{reset}.)' # See command errors at the end of line
+			;;
+		    2)
+		        export PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%m %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b " #Colorful for users
+		        RPROMPT=$'%(?.. %? %F{red}%B⨯%b%F{reset})%(1j. %j %F{yellow}%B⚙%b%F{reset}.)'
+			;;
+		    *)
+		        export PS1="%B%{$fg[green]%}%n@%M%{$fg[white]%}:%{$fg[blue]%}%~%{$reset_color%}$%b  " #For users green color
+			RPROMPT=$'%(?.. %? %F{red}%B⨯%b%F{reset})%(1j. %j %F{yellow}%B⚙%b%F{reset}.)'
+			;;
+		esac
+	else
+		case "$terminal_style" in
+			1)
+			    export PS1=$'%F{%(#.blue.green)}┌──${debian_chroot:+($debian_chroot)─}${VIRTUAL_ENV:+($(basename $VIRTUAL_ENV))─}(%B%F{%(#.red.blue)}ROOT$prompt_symbol$(hostname | awk \'{print toupper($0)}\')%b%F{%(#.blue.green)})-[%B%F{reset}%(6~.%-1~/…/%4~.%5~)%b%F{%(#.blue.green)}]\n└─%B%(#.%F{red}#.%F{blue}$)%b%F{reset} '
+			    RPROMPT=$'%(?.. %? %F{red}%B⨯%b%F{reset})%(1j. %j %F{yellow}%B⚙%b%F{reset}.)'
+			    ;;
+			2)
+			    export PS1="%B%{$fg[red]%}[%{$fg[yellow]%}ROOT%{$fg[green]%}@%{$fg[blue]%}$(hostname | awk '{print toupper($0)}') %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}#%b " #Colorful UPPERCASE for root
+			    RPROMPT=$'%(?.. %? %F{red}%B⨯%b%F{reset})%(1j. %j %F{yellow}%B⚙%b%F{reset}.)'
+			    ;;
+			*)
+			    export PS1="%B%{$fg[red]%}%n@%M%{$fg[white]%}:%{$fg[blue]%}%~%{$reset_color%}#%b  " #For Root red color
+			    RPROMPT=$'%(?.. %? %F{red}%B⨯%b%F{reset})%(1j. %j %F{yellow}%B⚙%b%F{reset}.)'
+			    ;;
+
+		esac
+	fi
+}
+
+configure_prompt
+
+# If nothing is set in terminal-style then set style to 3
+# Set in $HOME/.config/shell/config
+if [ -z $terminal_style ]; then
+	export terminal_style=3
+fi
+
+# Cycle through promts with keybind
+change_color_prompt(){
+	if [ "$terminal_style" = 1 ]; then
+		export terminal_style=2
+		sed -i 's/terminal_style=.*/terminal_style=2/g' $SHELL_DIR/config
+	elif [ "$terminal_style" = 2 ]; then
+		export terminal_style=3
+		sed -i 's/terminal_style=.*/terminal_style=3/g' $SHELL_DIR/config
+	else
+		export terminal_style=1
+		sed -i 's/terminal_style=.*/terminal_style=1/g' $SHELL_DIR/config
+	fi
+	configure_prompt
+	zle reset-prompt
+}
+#Create new Keybind
+zle -N change_color_prompt
+bindkey ^P change_color_prompt

@@ -1,0 +1,24 @@
+#################################################
+#                   EXPORTS                     #
+#################################################
+
+export PATH="$PATH:$HOME/bin"
+export EDITOR="vim" #Set default editor
+export TERM="xterm-256color" #For VIM Themes over SSH and Colors
+
+
+# Select Terminal Style: 
+# Or Use the Keybind Ctrl + P in terminal to cycle through styles (only zsh)
+export terminal_style=3
+# Terminal Style 1: Twoline Kali Linux Style
+# Terminal Style 2: Oneline coulourful
+# Terminal Style 3: Normal
+
+# Enalbe or disable Plugins:
+export activate_plugins=false
+# Set to true or false
+
+# Quellen aus dem source.d-Verzeichnis laden
+for file in ~/.config/shell/source.d/*; do
+    [ -r "$file" ] && source "$file"
+done
