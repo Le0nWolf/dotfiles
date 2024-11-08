@@ -1,0 +1,5 @@
+chezmoi-cd() {
+    cd $(chezmoi source-path)
+}
+
+Set-Alias czcd chezmoi-cd

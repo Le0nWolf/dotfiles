@@ -1,0 +1,285 @@
+#################################################
+#                    Aliases                    #
+#################################################
+
+#SSH to old devices
+alias ssh-old='ssh -o kexalgorithms=diffie-hellman-group1-sha1 -oHostKeyAlgorithms=+ssh-dss'
+# SSH force password use
+alias ssh-pw='ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no -o ControlPath=none'
+
+# Get LLDP Information
+alias network-info='lldpctl' # lldpd have to be installed (apt install lldpd)
+
+#LS, grep, and cat Colors
+alias ls='ls -l $LS_OPTIONS'
+alias dir='dir --color=auto'
+alias vdir='vdir --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias ip='ip --color=auto'
+alias ccat='highlight --out-format=ansi' #Color cat - print file with syntax highlighting -- apt install highlight
+alias sudo='sudo ' #For sudo colors
+
+#Use aliases in watch
+alias watch='watch '
+
+#master ls alias
+alias l='ls $LS_OPTIONS -lAhtr --group-directories-first '
+
+#Permisson aliases
+alias s='sudo ' #Shorter Sudo
+alias rootl='sudo su -' #Switch to root user
+
+#File aliases
+alias mkdir='mkdir -pv' #Create directory with parent directorys verbose
+alias rmdir='/bin/rm  --recursive --force --verbose ' # Remove a directory and all files
+alias difflines='diff --unchanged-line-format= --old-line-format= --new-line-format='%L'' # See wich Lines from the second file B are not in the first file A
+
+#other useful aliases
+alias checkcommand="type" # To see if a command is aliased, a file, or a built-in command
+alias logs="sudo find /var/log -type f -exec file {} \; | grep 'text' | cut -d' ' -f1 | sed -e's/:$//g' | grep -v '[0-9]$' | xargs tail -f" # Show all logs in /var/log
+alias weather='curl -s "wttr.in?&&lang=de"' # Show weather in Terminal
+alias wetter='weather'
+
+#Network Aliases
+alias ipview-https="netstat -anpl | grep :443 | awk {'print \$5'} | cut -d\":\" -f1 | sort | uniq -c | sort -n | sed -e 's/^ *//' -e 's/ *\$//'" #Show IP's connectet to Port 443
+alias ipview-ssh="netstat -anpl | grep :22 | awk {'print \$5'} | cut -d\":\" -f1 | sort | uniq -c | sort -n | sed -e 's/^ *//' -e 's/ *\$//'" #Show IP's connectet to Port 22
+alias openports='netstat -nape --inet' # Show open ports
+
+#WiFi Alias
+alias wifisignal='echo Das WLAN Signal liegt bei: $(iwconfig wlan0 | grep -i 'Signal' | cut -d "=" -f3)'
+
+#Aliases if SSHGuard is installed (modified openssh Server to see wrong passwords in the log)
+alias show-ssh-guard='cat /var/log/auth.log | grep SSHGuard'
+alias show-ssh-guard-live='tail -Fn 55 /var/log/auth.log | grep SSHGuard'
+alias show-ssh-log='cat /var/log/auth.log | grep sshd'
+alias show-ssh-log-live='tail -Fn 55 /var/log/auth.log | grep sshd'
+
+#Encryption
+alias umountcrypt='veracrypt --text --dismount'
+alias mountcrypt='veracrypt --text --keyfiles="" --mount --pim=0 --protect-hidden=no'
+
+#Tree Size
+alias treesize='ncdu'
+
+#Zoxide show directorys
+alias zz='zoxide query -ls'
+
+#Crypto price retrieval
+alias btc='curl eur.rate.sx/btc'
+
+#Dig Shortcuts
+alias digs='dig +search'
+alias digptr='dig -x'
+
+# Dmesg
+alias dmesgf='dmesg -wH'
+alias dmesgt='dmesg -T'
+
+#chezmoi
+alias cz='chezmoi '
+alias czcd='cd $(chezmoi source-path)'
+
+#################################################
+#                  Functions                  	#
+#################################################
+
+#CPU Information
+cpuload () {
+	awk '{u=$2+$4; t=$2+$4+$5; if (NR==1){u1=u; t1=t;} else print ($2+$4-u1) * 100 / (t-t1) "%"; }' <(grep 'cpu ' /proc/stat) <(sleep 1;grep 'cpu ' /proc/stat)
+}
+
+cpuloadav () {
+	grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage "%"}'
+}
+
+#see how much disk memory is beeing used
+usedmemory () {
+	 free | grep Mem | awk '{print $3/$2 * 100.0 usage "%"}'
+}
+
+showpubip () {
+	myip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
+	echo "WAN/Public IP address: ${myip}"
+}
+
+# Crypto Prices
+cryptocalc () {
+	curr=$1
+	value=$(echo $curr | egrep -o "[0-9]*")
+	currency=$(echo $curr | egrep -o "[a-z]*" | tr '[:lower:]' '[:upper:]')
+	crypto="$(curl -s eur.rate.sx/$curr)"
+	eur=${crypto%.*}
+	cent=${crypto#*.}
+	cent=${cent:0:2}
+	echo -e "\n$value $currency: $eur.$cent €\n"
+}
+
+btcprice () {
+	curr=1btc
+	crypto="$(curl -s eur.rate.sx/$curr)"
+	eur=${crypto%.*}
+	cent=${crypto#*.}
+	cent=${cent:0:2}
+	echo -e "\n₿itcoin: $eur.$cent €\n"
+}
+
+crypto () {
+	curr=$1
+	curl eur.rate.sx/$curr
+}
+
+# Extracts any archive(s) (if unp isn't installed)
+extract () {
+	for archive in $*; do
+		if [ -f $archive ] ; then
+			case $archive in
+				*.tar.bz2)   tar xvjf $archive    ;;
+				*.tar.gz)    tar xvzf $archive    ;;
+				*.bz2)       bunzip2 $archive     ;;
+				*.rar)       rar x $archive       ;;
+				*.gz)        gunzip $archive      ;;
+				*.tar)       tar xvf $archive     ;;
+				*.tbz2)      tar xvjf $archive    ;;
+				*.tgz)       tar xvzf $archive    ;;
+				*.zip)       unzip $archive       ;;
+				*.Z)         uncompress $archive  ;;
+				*.7z)        7z x $archive        ;;
+				*)           echo "don't know how to extract '$archive'..." ;;
+			esac
+		else
+			echo "'$archive' is not a valid file!"
+		fi
+	done
+}
+
+# Searches for text in all files in the current folder
+ftext ()
+{
+	# -i case-insensitive
+	# -I ignore binary files
+	# -H causes filename to be printed
+	# -r recursive search
+	# -n causes line number to be printed
+	# optional: -F treat search term as a literal, not a regular expression
+	# optional: -l only print filenames and not the matching lines ex. grep -irl "$1" *
+	grep -iIHrn --color=always "$1" . | less -r
+}
+
+# Copy file with a progress bar
+copypb()
+{
+	set -e
+	strace -q -ewrite cp -- "${1}" "${2}" 2>&1 \
+	| awk '{
+	count += $NF
+	if (count % 10 == 0) {
+		percent = count / total_size * 100
+		printf "%3d%% [", percent
+		for (i=0;i<=percent;i++)
+			printf "="
+			printf ">"
+			for (i=percent;i<100;i++)
+				printf " "
+				printf "]\r"
+			}
+		}
+	END { print "" }' total_size=$(stat -c '%s' "${1}") count=0
+}
+
+
+###################################################################
+#                     Shell specific Aliases                      #
+###################################################################
+
+if [[ $(ps -p $$ | grep bash) ]]; then
+#################################################
+#            Bash specific Aliases              #
+#################################################
+	alias ref='. ~/.bashrc' #Refresh shortcuts manually and reload bashrc
+	alias root='sudo bash' #Start "sudo" Shell as current user
+
+
+
+
+elif [[ $(ps -p $$ | grep zsh) ]]; then
+#################################################
+#            zsh specific Aliases               #
+#################################################
+	alias ref='. ~/.zshrc' #Refresh shortcuts manually and reload zshrc
+	alias history='history -E 1' # Show complete history
+	alias root='sudo zsh' #Start "sudo" Shell as current user
+
+
+
+
+
+else
+#################################################
+#       specific Aliases for other Shells       #
+#################################################
+	alias ref='$HOME/.config/shell/config' #Refresh
+	alias test='echo Test'
+
+
+
+fi
+###################################################################
+#                       OS specific Aliases                       #
+###################################################################
+
+case "$(uname -s)" in
+
+Darwin)
+	# echo 'Mac OS X'
+
+	#Use GLS instead of LS
+	# To get this working please install CoreUtils: brew install coreutils
+	alias l='gls $LS_OPTIONS -lAh --group-directories-first '
+	alias ls='gls -l $LS_OPTIONS'
+	alias dir='gdir --color=auto'
+	alias vdir='gvdir --color=auto'
+
+	#Remap aliases to Mac Version
+	alias openports='sudo lsof -i -P | grep LISTEN'
+	alias mkdir='gmkdir -pv' #Create directory with parent directorys verbose
+	alias rmdir='grm  --recursive --force --verbose ' # Remove a directory and all files
+
+	#Change Mac Hostname
+	alias changehostname='sudo scutil --set HostName '
+
+	# Use gnu-sed
+	alias sed='gsed ' # brew install gnu-sed
+
+	#Remove non functional aliases
+	unalias ipview-https
+	unalias ipview-ssh
+	unalias wifisignal
+	unalias show-ssh-guard
+	unalias show-ssh-guard-live
+	unalias show-ssh-log
+	unalias show-ssh-log-live
+	unalias ip # disables non-functional color for iproute2mac # brew install iproute2mac
+
+	#Remove non functional functions
+	unset -f cpuload
+	unset -f cpuloadav
+	unset -f usedmemory
+	unset -f copypb
+
+
+
+	;;
+
+Linux)
+	alias ls='ls --color=auto'
+	;;
+
+CYGWIN* | MINGW32* | MSYS* | MINGW*)
+	# echo 'MS Windows'
+	;;
+*)
+	# echo 'Other OS'
+	;;
+esac
