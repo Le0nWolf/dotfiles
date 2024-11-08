@@ -12,7 +12,7 @@
   // "editor.fontLigatures": true,
   // Font Ligatures for MonoLisa Open Type features see https://www.monolisa.dev/orders for more Information
   // Whitespace Ligatures (calt); Coding Ligatures (liga); Alternative G (ss03 and ss04); Slashed Zero (zero); Normal Asterisk * (ss01); Script Variant (ss02); Alternativ Sharp S (ss05); Alternativ At @ (ss06 and ss18); Alternativ Curly Bracket {} (ss07); Alternativ Parenthesis () (ss08); Alternativ Greater Equal >= (ss09 and ss10); Hexadecimal X (ss11); Thin Backslash (ss12); Alternativ Dollar $ (ss13); Alternativ & (ss14); "I" Without Serif (ss15); "R" Without Serif (ss16); Alternativ .= and ..= (ss17);
-  // "editor.fontLigatures": "'calt' on, 'liga' on, 'zero' off, 'ss02' on, 'ss01' off, 'ss05' on, 'ss07' on, 'ss08' on, 'ss11' on, 'ss12' off, 'ss13' off, 'ss14' on, 'ss17' on",
+  "editor.fontLigatures": "'calt' on, 'liga' on, 'zero' off, 'ss02' on, 'ss01' off, 'ss05' on, 'ss07' on, 'ss08' on, 'ss11' on, 'ss12' off, 'ss13' off, 'ss14' on, 'ss17' on",
   // ====== Font Scope Customization ======
   "editor.tokenColorCustomizations": {
     "textMateRules": [
@@ -46,8 +46,9 @@
       }
     ]
   },
-  "workbench.colorTheme": "Night Owl",
+  "workbench.colorTheme": "Night Owl", // Set the Color Theme
   "editor.formatOnPaste": true,
-  "editor.formatOnSave": true, // Set the Color Theme
+  "editor.formatOnSave": true,
   "editor.guides.bracketPairs": true
+  "workbench.iconTheme": "material-icon-theme"
 }
