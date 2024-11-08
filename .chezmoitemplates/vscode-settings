@@ -49,6 +49,6 @@
   "workbench.colorTheme": "Night Owl", // Set the Color Theme
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
-  "editor.guides.bracketPairs": true
+  "editor.guides.bracketPairs": true,
   "workbench.iconTheme": "material-icon-theme"
 }
