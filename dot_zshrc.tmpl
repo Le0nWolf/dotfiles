@@ -188,3 +188,11 @@ change_color_prompt(){
 #Create new Keybind
 zle -N change_color_prompt
 bindkey ^P change_color_prompt
+
+{{ if ne (lookPath "starship") "" }}
+#################################################
+#                   STARSHIP                    #
+#################################################
+
+eval "$(starship init zsh)"
+{{- end }}
