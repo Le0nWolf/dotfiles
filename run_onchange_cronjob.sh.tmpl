@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Fügt den Cronjob hinzu, falls er noch nicht existiert
+(crontab -l | grep -F '* * * * * /usr/bin/chezmoi update --no-tty --force') || \
+  (crontab -l; echo '* * * * * /usr/bin/chezmoi update --no-tty --force') | crontab -
