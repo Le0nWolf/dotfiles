@@ -1,5 +1,10 @@
 #!/bin/sh
 
-# Fügt den Cronjob hinzu, falls er noch nicht existiert
-(crontab -l | grep -F '* * * * * /usr/bin/chezmoi update --no-tty --force') || \
-  (crontab -l; echo '* * * * * /usr/bin/chezmoi update --no-tty --force') | crontab -
+# Definierte gewünschte Cron-Zeile
+TARGET_CRON="5 * * * * /usr/bin/chezmoi update --no-tty --force"
+
+# Prüft, ob die gewünschte Zeile bereits exakt existiert
+if ! crontab -l | grep -Fxq "$TARGET_CRON"; then
+  # Entfernt vorhandene Zeilen, die den Befehl enthalten, aber nicht übereinstimmen
+  (crontab -l | grep -v "/usr/bin/chezmoi update --no-tty --force"; echo "$TARGET_CRON") | crontab -
+fi
