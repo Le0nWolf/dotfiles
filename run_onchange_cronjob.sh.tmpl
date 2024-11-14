@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Definierte gewünschte Cron-Zeile mit dem chezmoi-Pfad über das Template
-TARGET_CRON="5 * * * * {{ .chezmoi.executable }} update --no-tty --force"
+TARGET_CRON="10 * * * * {{ .chezmoi.executable }} update --no-tty --force"
 
 # Prüft, ob die gewünschte Zeile bereits exakt existiert
 if ! crontab -l | grep -Fx "$TARGET_CRON" >/dev/null 2>&1; then
