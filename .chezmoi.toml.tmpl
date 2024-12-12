@@ -1,12 +1,12 @@
 {{- $isServer := promptBoolOnce . "isServer" "Is this a server? (yes/no)" -}}
 
-{{- if $isServer }}
 [data]
+{{- if $isServer }}
     role = "server"
 
 {{- else }}
 {{- $email := promptStringOnce . "email" "Email address" -}}
-[data]
+    role= "client"
     email = {{ $email | quote }}
 {{- end }}
 
