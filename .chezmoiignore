@@ -19,6 +19,9 @@ Library
 
 {{ if eq (lookPath "1password") "" }}
 .config/1Password
+{{ if eq (lookPath "op") "" }}
+.ssh/config
+{{ end }}
 {{ end }}
 
 {{ if eq .role "server" }}
