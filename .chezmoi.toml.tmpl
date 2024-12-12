@@ -3,13 +3,13 @@
 [data]
 {{- if $isServer }}
     role = "server"
-
 {{- else }}
-{{- $email := promptStringOnce . "email" "Email address" -}}
-    role= "client"
+    role = "client"
+{{- end }}
+{{- if not $isServer }}
+{{- $email := promptStringOnce . "email" "Email address" }}
     email = {{ $email | quote }}
 {{- end }}
-
 
 [edit]
 {{- if eq .chezmoi.os "windows" }}
