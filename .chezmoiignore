@@ -16,3 +16,8 @@ Library
 {{ if eq (lookPath "starship") "" }}
 .config/starship.toml
 {{ end }}
+
+{{ if eq .role "server" }}
+.gitconfig
+{{ end }}
+

@@ -1,7 +1,15 @@
-{{- $email := promptStringOnce . "email" "Email address" -}}
+{{- $type := promptBoolOnce . "isServer" "Is this a server? (yes/no)" -}}
 
+{{- if $isServer }}
+[data]
+    role = "server"
+
+{{- else }}
+{{- $email := promptStringOnce . "email" "Email address" -}}
 [data]
     email = {{ $email | quote }}
+{{- end }}
+
 
 [edit]
 {{- if eq .chezmoi.os "windows" }}
