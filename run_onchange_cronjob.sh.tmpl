@@ -10,4 +10,4 @@ if ! crontab -l 2>/dev/null | grep -Fx "$TARGET_CRON" >/dev/null 2>&1; then
   (crontab -l 2>/dev/null | grep -v "{{ .chezmoi.executable }} update --no-tty --force"; echo "$TARGET_CRON") | crontab -
 fi
 
-{{ end }}
+{{- end }}
