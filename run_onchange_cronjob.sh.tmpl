@@ -1,4 +1,4 @@
-{{ if ne (lookPath "crontab") "" }}
+{{- if ne (lookPath "crontab") "" -}}
 #!/bin/sh
 
 # Definierte gewünschte Cron-Zeile mit dem chezmoi-Pfad über das Template
