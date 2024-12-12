@@ -17,6 +17,10 @@ Library
 .config/starship.toml
 {{ end }}
 
+{{ if eq (lookPath "1password") "" }}
+.config/1Password
+{{ end }}
+
 {{ if eq .role "server" }}
 .gitconfig
 {{ end }}
