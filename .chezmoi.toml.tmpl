@@ -1,4 +1,4 @@
-{{- $type := promptBoolOnce . "isServer" "Is this a server? (yes/no)" -}}
+{{- $isServer := promptBoolOnce . "isServer" "Is this a server? (yes/no)" -}}
 
 {{- if $isServer }}
 [data]
